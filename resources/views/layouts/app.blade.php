@@ -33,6 +33,9 @@
         [v-cloak] {
             display:  none;
         }
+        .new-notification {
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -63,6 +66,7 @@
                                role="button" aria-haspopup="true" aria-expanded="false">
                                 Channels <span class="caret"></span>
                             </a>
+
                             <ul class="dropdown-menu">
                                 @foreach ($channels as $channel)
                                     <li>
@@ -73,6 +77,7 @@
                                 @endforeach
                             </ul>
                         </li>
+
                         <li><a href="{{ route('all.threads.index') }}">All threads</a></li>
                         <li>
                             <a href="{{ route('all.threads.index') }}?popularity=1">
@@ -88,8 +93,20 @@
                             <li><a href="{{ route('login') }}">Login</a></li>
                             <li><a href="{{ route('register') }}">Register</a></li>
                         @else
+                            <user-notification
+                                route="{{ route('notification.index') }}"
+                                read-route="{{ route('notification.read') }}"
+                                :new-notifications="{{ auth()->user()->unreadNotifications->count() }}"
+                            >
+                            </user-notification>
+
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                <a href="#"
+                                    class="dropdown-toggle"
+                                    data-toggle="dropdown"
+                                    role="button"
+                                    aria-expanded="false"
+                                >
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
@@ -101,7 +118,11 @@
                                             Logout
                                         </a>
 
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                        <form id="logout-form"
+                                            action="{{ route('logout') }}"
+                                            method="POST"
+                                            style="display: none;"
+                                        >
                                             {{ csrf_field() }}
                                         </form>
                                     </li>

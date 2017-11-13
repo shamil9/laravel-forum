@@ -44,4 +44,7 @@ Route::delete('/subscribe/{thread}', 'SubscriptionsController@destroy')
 Route::get('/notifications', 'NotificationsController@index')
     ->name('notification.index');
 
+Route::get('/notifications/read', 'NotificationsController@markAsRead')
+    ->name('notification.read');
+
 Auth::routes();

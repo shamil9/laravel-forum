@@ -8,10 +8,11 @@ class NotificationsController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
+        return auth()->user()->notifications;
+    }
 
-        if ($user->unreadNotifications->count()) {
-            $user->unreadNotifications->markAsRead();
-        }
+    public function markAsRead()
+    {
+        auth()->user()->unreadNotifications->markAsRead();
     }
 }

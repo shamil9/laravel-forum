@@ -44,7 +44,7 @@ class NotificationsTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_clear_notifications()
+    public function a_user_can_mark_notifications_as_read()
     {
         $this->signIn();
 
@@ -59,7 +59,7 @@ class NotificationsTest extends TestCase
 
         $this->assertCount(1, auth()->user()->unreadNotifications);
 
-        $this->get(route('notification.index'));
+        $this->get(route('notification.read'));
 
         $this->assertCount(0, auth()->user()->fresh()->unreadNotifications);
     }

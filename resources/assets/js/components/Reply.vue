@@ -2,13 +2,16 @@
     import favorite from './Favorite.vue'
     export default {
         props: ['attributes', 'route'],
+
         components: { favorite },
+
         data() {
             return {
                 isEditing: false,
                 body: this.attributes.body
             }
         },
+
         methods: {
             update() {
                 window.axios.patch(this.route, { body: this.body })
