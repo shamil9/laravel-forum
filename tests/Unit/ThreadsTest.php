@@ -3,9 +3,11 @@
 namespace Tests\Unit;
 
 use App\Channel;
+use App\Notifications\ThreadUpdated;
 use App\Thread;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class ThreadsTest extends TestCase
@@ -58,5 +60,23 @@ class ThreadsTest extends TestCase
             1,
             $thread->subscriptions()->where(['user_id' => $userId])->count()
         );
+    }
+
+    /** @test */
+    public function subscribed_users_should_be_notified_when_a_new_reply_is_added()
+    {
+        Notification::fake();
+
+        $this->signIn();
+
+        $thread = factory(Thread::class)->create();
+
+        $thread->subscribe()
+            ->addReply([
+                'user_id' => 1,
+                'body' => 'foobar'
+            ]);
+
+        Notification::assertSentTo(auth()->user(), ThreadUpdated::class);
     }
 }
