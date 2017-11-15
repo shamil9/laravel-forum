@@ -3,9 +3,10 @@
 namespace App;
 
 use App\Filters\Filter;
-use App\ThreadSubscription;
-use Illuminate\Database\Eloquent\Model;
 use App\Notifications\ThreadUpdated;
+use App\ThreadSubscription;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 class Thread extends Model
 {
@@ -87,5 +88,24 @@ class Thread extends Model
         return $this->subscriptions()
                     ->where(['user_id' => auth()->id()])
                     ->exists();
+    }
+
+    public function hasUpdates($user = null)
+    {
+        if (! auth()->check()) {
+            return;
+        }
+
+        $user = $user ?: auth()->user();
+        $key = $this->lastVisitTimeKey($user->id);
+
+        return $this->updated_at > cache($key);
+    }
+
+    public function lastVisitTimeKey($user = null)
+    {
+        $user = $user ?: auth()->user();
+
+        return sprintf('user.%s.visits.%s', $user, $this->id);
     }
 }

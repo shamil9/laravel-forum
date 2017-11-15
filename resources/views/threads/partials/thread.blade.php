@@ -5,8 +5,14 @@
                 <a href="{{ route('threads.show', [
                                             'channel' => $thread->channel_id,
                                             'thread' => $thread
-                                        ]) }}">
+                                        ])
+                        }}"
+                >
+                @if ($thread->hasUpdates())
+                    <strong>{{ $thread->title }}</strong>
+                @else
                     {{ $thread->title }}
+                @endif
                 </a>
             </h4>
             <strong>

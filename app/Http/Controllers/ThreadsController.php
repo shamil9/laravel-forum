@@ -6,6 +6,7 @@ use App\Channel;
 use App\Filters\ThreadFilters;
 use App\Thread;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
@@ -39,6 +40,8 @@ class ThreadsController extends Controller
      */
     public function show(Channel $channel, Thread $thread)
     {
+        cache()->forever($thread->lastVisitTimeKey(), Carbon::now());
+
         return view('threads/show', [
             'thread' => $thread,
             'replies' => $thread->replies()->paginate(20)
