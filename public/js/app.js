@@ -23945,7 +23945,7 @@ Axios.prototype.request = function request(config) {
     config.url = combineURLs(config.baseURL, config.url);
   }
 
-  // Hook up interceptors middleware
+  // Hook up interceptors Middleware
   var chain = [dispatchRequest, undefined];
   var promise = Promise.resolve(config);
 

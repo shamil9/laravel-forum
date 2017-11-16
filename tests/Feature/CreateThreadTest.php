@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Channel;
+use App\Middleware\Spam;
 use App\Reply;
 use App\Thread;
 use App\User;
@@ -84,5 +85,21 @@ class CreateThreadTest extends TestCase
             route('threads.store', ['channel' => $this->thread->channel->id]),
             array_merge($this->thread->toArray(), $fields)
         );
+    }
+    
+    /** @test */
+    function it_checks_if_thread_body_contains_spam()
+    {
+        $this->signIn();
+
+        $thread = factory(Thread::class)->create(['body' => 'Yahoo customer support']);
+
+        $this->expectException(\Exception::class);
+
+        $this->post(
+            route('threads.store', ['channel' => $thread->channel_id]),
+            $thread->toArray()
+        );
+
     }
 }

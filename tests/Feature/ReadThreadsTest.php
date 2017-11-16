@@ -42,8 +42,8 @@ class ReadThreadsTest extends TestCase
     public function a_user_can_view_thread()
     {
         $this->get(route('threads.show', [
-            'thread' => $this->thread->id,
-            'channel' => $this->thread->channel->id
+            'thread'  => $this->thread->id,
+            'channel' => $this->thread->channel->id,
         ]))
             ->assertSee($this->thread->title);
     }
@@ -96,7 +96,7 @@ class ReadThreadsTest extends TestCase
 
         $response = $this->getJson('threads?popularity=1')->json();
 
-        $this->assertEquals([3,2,1], array_column($response, 'replies_count'));
+        $this->assertEquals([3, 2, 1], array_column($response, 'replies_count'));
     }
 
     /** @test */
