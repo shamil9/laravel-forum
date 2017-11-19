@@ -3,8 +3,6 @@
 namespace Tests\Feature;
 
 use App\Channel;
-use App\Middleware\Spam;
-use App\Reply;
 use App\Thread;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -35,9 +33,10 @@ class CreateThreadTest extends TestCase
     {
         $this->be($this->user);
 
-        $this->post(route('threads.store', [
-            'channel' => $this->thread->channel->id
-        ]), $this->thread->toArray());
+        $this->post(
+           route('threads.store', ['channel' => $this->thread->channel->id]),
+            $this->thread->toArray()
+        );
 
         $this->get(route('threads.show', [
             'thread' => $this->thread->id,
@@ -86,9 +85,9 @@ class CreateThreadTest extends TestCase
             array_merge($this->thread->toArray(), $fields)
         );
     }
-    
+
     /** @test */
-    function it_checks_if_thread_body_contains_spam()
+    public function it_checks_if_thread_body_contains_spam()
     {
         $this->signIn();
 
@@ -100,6 +99,5 @@ class CreateThreadTest extends TestCase
             route('threads.store', ['channel' => $thread->channel_id]),
             $thread->toArray()
         );
-
     }
 }

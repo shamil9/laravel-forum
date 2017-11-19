@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Channel;
 use App\Filters\ThreadFilters;
-use App\Middleware\Spam;
+use App\Inspections\Spam;
 use App\Thread;
-use App\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class ThreadsController extends Controller
@@ -57,22 +55,22 @@ class ThreadsController extends Controller
     public function store(Request $request, Spam $spam)
     {
         $this->validate($request, [
-            'title'      => 'required',
-            'body'       => 'required',
+            'title' => 'required',
+            'body' => 'required',
             'channel_id' => 'required|exists:channels,id',
         ]);
 
         $spam->check($request->body);
 
         $thread = Thread::create([
-            'user_id'    => auth()->id(),
+            'user_id' => auth()->id(),
             'channel_id' => $request->channel_id,
-            'body'       => $request->body,
-            'title'      => $request->title,
+            'body' => $request->body,
+            'title' => $request->title,
         ]);
 
         return redirect(route('threads.show', [
-            'thread'  => $thread->id,
+            'thread' => $thread->id,
             'channel' => $thread->channel->id,
         ]))->with('flash', 'Thread created');
     }
