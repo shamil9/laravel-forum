@@ -3,14 +3,17 @@
 namespace Tests\Unit;
 
 use App\Inspections\Spam;
-use Tests\TestCase;
+use App\Reply;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
 
 class SpamTest extends TestCase
 {
+    use DatabaseMigrations;
+
     /** @test */
-    function it_checks_for_invalid_words()
+    public function it_checks_for_invalid_words()
     {
         $spam = new Spam();
 
@@ -18,16 +21,28 @@ class SpamTest extends TestCase
 
         $this->expectException('Exception');
 
-        $spam->check("yahoo customer support");
+        $spam->check('yahoo customer support');
     }
 
     /** @test */
-    function it_checks_for_key_repetition()
+    public function it_checks_for_key_repetition()
     {
         $spam = new Spam();
 
         $this->expectException('Exception');
 
         $spam->check('Hey ssssss');
+    }
+
+    /** @test */
+    public function it_checks_for_replies_spam()
+    {
+        $firstReply = factory(Reply::class)->create();
+        $secondReply = factory(Reply::class)->create(
+            ['created_at' => Carbon::now()->subMinute()]
+        );
+
+        $this->assertTrue($firstReply->isJustPosted());
+        $this->assertFalse($secondReply->isJustPosted());
     }
 }

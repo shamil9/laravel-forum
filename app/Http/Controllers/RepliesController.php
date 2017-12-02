@@ -16,21 +16,19 @@ class RepliesController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return void
      */
     public function index()
     {
-        //
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return void
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -42,12 +40,14 @@ class RepliesController extends Controller
      */
     public function store(Thread $thread)
     {
+        $this->authorize('store', new Reply);
+
         $this->validate(request(), [
-            'body' => 'required'
+            'body' => 'required',
         ]);
 
         $thread->addReply([
-            'body'    => request('body'),
+            'body' => request('body'),
             'user_id' => auth()->id(),
         ]);
 
@@ -58,22 +58,20 @@ class RepliesController extends Controller
      * Display the specified resource.
      *
      * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @return void
      */
     public function show($id)
     {
-        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @return void
      */
     public function edit($id)
     {
-        //
     }
 
     /**
@@ -81,7 +79,8 @@ class RepliesController extends Controller
      *
      * @param  \Illuminate\Http\Request $request
      * @param  Reply                    $reply
-     * @return \Illuminate\Http\Response
+     * @return void
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request, Reply $reply)
     {
@@ -94,6 +93,8 @@ class RepliesController extends Controller
      *
      * @param  Reply $reply
      * @return \Illuminate\Http\Response
+     * @throws \Exception
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function destroy(Reply $reply)
     {

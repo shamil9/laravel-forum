@@ -10,6 +10,11 @@ class ReplyPolicy
 {
     use HandlesAuthorization;
 
+    public function store(User $user)
+    {
+        return !$user->lastReply->isJustPosted();
+    }
+
     public function destroy(User $user, Reply $reply)
     {
         return $user->id == $reply->user_id;

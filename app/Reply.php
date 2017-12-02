@@ -2,9 +2,7 @@
 
 namespace App;
 
-use App\Favorite;
-use App\RecordActivity;
-use App\Thread;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Reply extends Model
@@ -38,6 +36,11 @@ class Reply extends Model
         return $this->MorphMany(Favorite::class, 'favorited');
     }
 
+    public function thread()
+    {
+        return $this->belongsTo(Thread::class);
+    }
+
     public function favorite()
     {
         if ($this->favorites()->exists()) {
@@ -52,10 +55,9 @@ class Reply extends Model
         $this->favorites()->where(['user_id' => auth()->id()])->get()->each->delete();
     }
 
-
     public function isFavorited()
     {
-        return !! $this->favorites->where('user_id', auth()->id())->count();
+        return !!$this->favorites->where('user_id', auth()->id())->count();
     }
 
     public function getIsFavoritedAttribute()
@@ -68,16 +70,16 @@ class Reply extends Model
         return $this->favorites->count();
     }
 
-    public function thread()
-    {
-        return $this->belongsTo(Thread::class);
-    }
-
     public function path()
     {
         return route('threads.show', [
             'thread' => $this->thread->id,
             'channel' => $this->thread->channel_id
         ]);
+    }
+
+    public function isJustPosted()
+    {
+        return !!$this->created_at->gt(Carbon::now()->subMinute());
     }
 }
