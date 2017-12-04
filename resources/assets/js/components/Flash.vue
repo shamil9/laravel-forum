@@ -10,14 +10,16 @@
 
         data() {
             return {
-                body: '',
+                body: this.message,
                 isVisible: false
             }
         },
 
         created() {
+            window.events.$on('flash', message => this.flash(message))
+
             if (this.message) {
-                window.events.$on('flash', message => this.flash(message))
+                this.isVisible = true
             }
         },
 
@@ -26,10 +28,12 @@
                 this.show(message)
                 this.hide()
             },
+
             show(message) {
                 this.body = message
                 this.isVisible = true
             },
+
             hide() {
                 setTimeout(() => this.isVisible = false, 3000)
             }

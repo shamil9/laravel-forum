@@ -929,7 +929,7 @@ if (token) {
 //     key: 'your-pusher-key'
 // });
 
-window.events = new Vue();
+window.events = new Vue({});
 window.flash = function (message) {
     window.events.$emit('flash', message);
 };
@@ -23945,7 +23945,7 @@ Axios.prototype.request = function request(config) {
     config.url = combineURLs(config.baseURL, config.url);
   }
 
-  // Hook up interceptors Middleware
+  // Hook up interceptors middleware
   var chain = [dispatchRequest, undefined];
   var promise = Promise.resolve(config);
 
@@ -25312,17 +25312,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     data: function data() {
         return {
-            body: '',
+            body: this.message,
             isVisible: false
         };
     },
     created: function created() {
         var _this = this;
 
+        window.events.$on('flash', function (message) {
+            return _this.flash(message);
+        });
+
         if (this.message) {
-            window.events.$on('flash', function (message) {
-                return _this.flash(message);
-            });
+            this.isVisible = true;
         }
     },
 
