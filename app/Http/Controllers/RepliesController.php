@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreReply;
 use App\Reply;
 use App\Thread;
 use Illuminate\Http\Request;
@@ -38,14 +39,8 @@ class RepliesController extends Controller
      * @return \Illuminate\Http\Response
      * @internal param Request $request
      */
-    public function store(Thread $thread)
+    public function store(Thread $thread, StoreReply $request)
     {
-        $this->authorize('store', new Reply);
-
-        $this->validate(request(), [
-            'body' => 'required',
-        ]);
-
         $thread->addReply([
             'body' => request('body'),
             'user_id' => auth()->id(),
@@ -85,6 +80,7 @@ class RepliesController extends Controller
     public function update(Request $request, Reply $reply)
     {
         $this->authorize('update', $reply);
+
         $reply->update(request(['body']));
     }
 

@@ -12,6 +12,10 @@ class ReplyPolicy
 
     public function store(User $user)
     {
+        if (!$user->lastReply()->count()) {
+            return true;
+        }
+
         return !$user->lastReply->isJustPosted();
     }
 

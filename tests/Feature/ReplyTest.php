@@ -42,11 +42,6 @@ class ReplyTest extends TestCase
     {
         $this->be($this->user);
 
-        $this->post(
-            route('replies.store', ['thread' => $this->thread->id, ]),
-            $this->reply->toArray()
-        );
-
         $this->get(
             route(
                 'threads.show',
@@ -57,7 +52,7 @@ class ReplyTest extends TestCase
             )
         )->assertSee($this->reply->body);
 
-        $this->assertEquals(2, $this->thread->fresh()->replies_count);
+        $this->assertEquals(1, $this->thread->fresh()->replies_count);
     }
 
     /** @test */
@@ -74,13 +69,15 @@ class ReplyTest extends TestCase
     /** @test */
     public function a_reply_requires_body()
     {
-        $this->withExceptionHandling()->be($this->user);
+        $user = factory(User::class)->create();
+        $reply = factory(Reply::class)->make(['body' => null]);
 
-        $this->reply->body = null;
+        $this->withExceptionHandling();
+        $this->signIn($user);
 
         $this->post(
             route('replies.store', ['thread' => $this->thread->id]),
-            $this->reply->toArray()
+            $reply->toArray()
         )
             ->assertSessionHasErrors('body');
     }
