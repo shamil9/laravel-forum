@@ -12,7 +12,11 @@ class ReplyPolicy
 
     public function store(User $user)
     {
-        return !$user->lastReply->isJustPosted();
+        if (! $user->lastReply()->count()) {
+            return true;
+        }
+
+        return ! $user->lastReply->isJustPosted();
     }
 
     public function destroy(User $user, Reply $reply)

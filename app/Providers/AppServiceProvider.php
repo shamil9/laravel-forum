@@ -3,8 +3,6 @@
 namespace App\Providers;
 
 use App\Channel;
-use App\Observers\ReplyObserver;
-use App\Reply;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,6 +22,8 @@ class AppServiceProvider extends ServiceProvider
             });
             $view->with('channels', $channels);
         });
+
+        \Validator::extend('spamfree', 'App\Rules\SpamFree@passes');
     }
 
     /**
@@ -33,6 +33,5 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
     }
 }

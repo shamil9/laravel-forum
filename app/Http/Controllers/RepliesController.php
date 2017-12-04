@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreReply;
 use App\Reply;
 use App\Thread;
 use Illuminate\Http\Request;
@@ -14,64 +15,24 @@ class RepliesController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return void
-     */
-    public function index()
-    {
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return void
-     */
-    public function create()
-    {
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param Thread $thread
      * @return \Illuminate\Http\Response
      * @internal param Request $request
      */
-    public function store(Thread $thread)
+    public function store(Thread $thread, StoreReply $request)
     {
-        $this->authorize('store', new Reply);
-
-        $this->validate(request(), [
-            'body' => 'required',
-        ]);
-
         $thread->addReply([
-            'body' => request('body'),
+            'body'    => request('body'),
             'user_id' => auth()->id(),
         ]);
 
+        if (request()->wantsJson()) {
+            return response()->json(['message' => 'Reply succesfully added']);
+        }
+
         return back()->with('flash', 'Reply succesfully added');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return void
-     */
-    public function show($id)
-    {
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return void
-     */
-    public function edit($id)
-    {
     }
 
     /**
@@ -85,6 +46,7 @@ class RepliesController extends Controller
     public function update(Request $request, Reply $reply)
     {
         $this->authorize('update', $reply);
+
         $reply->update(request(['body']));
     }
 
@@ -103,9 +65,9 @@ class RepliesController extends Controller
         $reply->delete();
 
         if (request()->wantsJson()) {
-            return;
+            return response()->json(['message' => 'Reply succesfully deleted']);
         }
 
-        return redirect(back());
+        return back();
     }
 }

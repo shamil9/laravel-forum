@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Channel;
 use App\Reply;
-use App\Thread;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
@@ -22,12 +21,12 @@ class ReplyTest extends TestCase
         parent::setUp();
         $this->user = factory(User::class)->create();
         $this->thread = factory('App\Thread')->create([
-            'user_id' => $this->user->id,
+            'user_id'    => $this->user->id,
             'channel_id' => factory(Channel::class)->create()->id,
         ]);
         $this->reply = factory('App\Reply')->create([
             'thread_id' => $this->thread->id,
-            'user_id' => $this->user->id,
+            'user_id'   => $this->user->id,
         ]);
     }
 
@@ -42,22 +41,17 @@ class ReplyTest extends TestCase
     {
         $this->be($this->user);
 
-        $this->post(
-            route('replies.store', ['thread' => $this->thread->id, ]),
-            $this->reply->toArray()
-        );
-
         $this->get(
             route(
                 'threads.show',
                 [
-                    'thread' => $this->thread->id,
+                    'thread'  => $this->thread->id,
                     'channel' => $this->thread->channel->id,
                 ]
             )
         )->assertSee($this->reply->body);
 
-        $this->assertEquals(2, $this->thread->fresh()->replies_count);
+        $this->assertEquals(1, $this->thread->fresh()->replies_count);
     }
 
     /** @test */
@@ -65,24 +59,30 @@ class ReplyTest extends TestCase
     {
         $this->expectException('Illuminate\Auth\AuthenticationException');
 
-        $this->post(route('replies.store', [
-            'thread' => $this->thread->id,
-            'channel' => $this->thread->channel->id,
-        ]));
+        $this->post(
+            route(
+                'replies.store',
+                [
+                    'thread'  => $this->thread->id,
+                    'channel' => $this->thread->channel->id,
+                ]
+            )
+        );
     }
 
     /** @test */
     public function a_reply_requires_body()
     {
-        $this->withExceptionHandling()->be($this->user);
+        $user = factory(User::class)->create();
+        $reply = factory(Reply::class)->make(['body' => null]);
 
-        $this->reply->body = null;
+        $this->withExceptionHandling();
+        $this->signIn($user);
 
         $this->post(
             route('replies.store', ['thread' => $this->thread->id]),
-            $this->reply->toArray()
-        )
-            ->assertSessionHasErrors('body');
+            $reply->toArray()
+        )->assertSessionHasErrors('body');
     }
 
     /** @test */
@@ -102,14 +102,14 @@ class ReplyTest extends TestCase
         $this->withExceptionHandling();
 
         $user = factory(User::class)->create();
-        $reply = factory(Reply::class)->create();
 
         $this->signIn($user);
 
-        $this->delete(route('replies.destroy', ['thread' => $reply->thread->id]))
-            ->assertStatus(403);
+        $this->delete(
+            route('replies.destroy', ['thread' => $this->reply->thread->id])
+        )->assertStatus(403);
 
-        $this->assertDatabaseHas('replies', ['id' => $reply->id]);
+        $this->assertDatabaseHas('replies', ['id' => $this->reply->id]);
     }
 
     /** @test */
@@ -117,27 +117,20 @@ class ReplyTest extends TestCase
     {
         $this->withExceptionHandling();
 
-        $user = factory(User::class)->create();
-        $reply = factory(Reply::class)->create([
-            'user_id' => $user->id,
-        ]);
+        $this->signIn($this->user);
 
-        $this->signIn($user);
-
-        $this->delete(route('replies.destroy', ['thread' => $reply->thread->id]))
+        $this->delete(route('replies.destroy', ['thread' => $this->reply->thread->id]))
             ->assertStatus(302);
 
-        $this->assertDatabaseMissing('replies', ['id' => $reply->id]);
+        $this->assertDatabaseMissing('replies', ['id' => $this->reply->id]);
     }
 
     /** @test */
-    public function unauthonticated_user_may_not_edit_replies()
+    public function unauthenticated_user_may_not_edit_replies()
     {
         $this->withExceptionHandling();
 
-        $reply = factory(Reply::class)->create();
-
-        $this->patch(route('replies.update', $reply))
+        $this->patch(route('replies.update', $this->reply))
             ->assertRedirect('login');
     }
 
@@ -146,11 +139,10 @@ class ReplyTest extends TestCase
     {
         $this->withExceptionHandling();
 
-        $reply = factory(Reply::class)->create();
         $user = factory(User::class)->create();
         $this->signIn($user);
 
-        $this->patch(route('replies.update', $reply))
+        $this->patch(route('replies.update', $this->reply))
             ->assertStatus(403);
     }
 
@@ -159,17 +151,15 @@ class ReplyTest extends TestCase
     {
         $this->withExceptionHandling();
 
-        $user = factory(User::class)->create();
-        $reply = factory(Reply::class)->create(['user_id' => $user->id]);
         $updatedText = 'foobar';
 
-        $this->signIn($user);
+        $this->signIn($this->user);
 
-        $this->patch(route('replies.update', $reply), ['body' => $updatedText])
+        $this->patch(route('replies.update', $this->reply), ['body' => $updatedText])
             ->assertStatus(200);
 
         $this->assertDatabaseHas('replies', [
-            'id' => $reply->id,
+            'id'   => $this->reply->id,
             'body' => $updatedText,
         ]);
     }
@@ -179,11 +169,19 @@ class ReplyTest extends TestCase
     {
         $this->withExceptionHandling();
 
-        $this->signIn($this->user);
+        $user = factory(User::class)->create();
+        $reply = factory(Reply::class)->create();
+
+        $this->signIn($user);
 
         $this->post(
-            route('replies.store', ['thread' => $this->thread->id, ]),
-            $this->reply->toArray()
+            route('replies.store', ['thread' => $this->thread->id,]),
+            $reply->toArray()
+        )->assertStatus(302);
+
+        $this->post(
+            route('replies.store', ['thread' => $this->thread->id,]),
+            $reply->toArray()
         )->assertStatus(403);
     }
 }
