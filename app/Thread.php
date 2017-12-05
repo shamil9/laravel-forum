@@ -2,10 +2,9 @@
 
 namespace App;
 
+use App\Events\ThreadReceivedNewReply;
 use App\Filters\Filter;
 use App\Notifications\ThreadUpdated;
-use App\ThreadSubscription;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Thread extends Model
@@ -38,7 +37,7 @@ class Thread extends Model
     {
         $reply = $this->replies()->create($reply);
 
-        $this->notifySubscribers($reply);
+        event(new ThreadReceivedNewReply($reply));
 
         return $reply;
     }
@@ -70,7 +69,7 @@ class Thread extends Model
     public function subscribe($userId = null)
     {
         $this->subscriptions()->create([
-            'user_id' => $userId ?: auth()->id()
+            'user_id' => $userId ?: auth()->id(),
         ]);
 
         return $this;
@@ -86,8 +85,8 @@ class Thread extends Model
     public function getIsSubscribedAttribute()
     {
         return $this->subscriptions()
-                    ->where(['user_id' => auth()->id()])
-                    ->exists();
+            ->where(['user_id' => auth()->id()])
+            ->exists();
     }
 
     public function hasUpdates($user = null)

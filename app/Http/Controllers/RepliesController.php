@@ -17,7 +17,8 @@ class RepliesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Thread $thread
+     * @param Thread     $thread
+     * @param StoreReply $request
      * @return \Illuminate\Http\Response
      * @internal param Request $request
      */
