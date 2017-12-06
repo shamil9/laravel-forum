@@ -15,13 +15,15 @@
 
         <div class="panel-body">
             <div v-if="isEditing" v-cloak>
-                <div class="form-group">
-                    <textarea class="form-control" v-model="body"></textarea>
-                </div>
-                <div class="form-group">
-                    <button @click="update" class="btn btn-primary btn-xs">Update</button>
-                    <button @click="isEditing = false" class="btn btn-link btn-xs">Cancel</button>
-                </div>
+                <form @submit="update">
+                    <div class="form-group">
+                        <textarea class="form-control" v-model="body" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-xs">Update</button>
+                        <button @click="isEditing = false" class="btn btn-link btn-xs">Cancel</button>
+                    </div>
+                </form>
             </div>
             <div v-else v-text="body"></div>
         </div>
