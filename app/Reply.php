@@ -70,6 +70,17 @@ class Reply extends Model
         return $this->favorites->count();
     }
 
+    public function setBodyAttribute($body)
+    {
+        $newBody = preg_replace(
+            '/@([\w\-]+)/',
+            '<a href="' . route('profile.show', [auth()->user()]) . '">$0</a>',
+            $body
+        );
+
+        return $this->attributes['body'] = $newBody;
+    }
+
     public function path()
     {
         return route('threads.show', [
@@ -85,7 +96,7 @@ class Reply extends Model
 
     public function mentionedUsers()
     {
-        preg_match_all('/\@([^\s\.]+)/', $this->body, $matches);
+        preg_match_all('/@([\w\-]+)/', $this->body, $matches);
 
         return $matches[1];
     }

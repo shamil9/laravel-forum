@@ -13,8 +13,20 @@ class ReplyTest extends TestCase
     /** @test */
     function it_returns_names_of_mentioned_users()
     {
-        $reply = factory(Reply::class)->create(['body' => 'Hi @JaneDoe and @JohnDoe']);
+        $reply = new Reply(['body' => 'Hi @JaneDoe and @JohnDoe']);
 
         $this->assertEquals(['JaneDoe', 'JohnDoe'], $reply->mentionedUsers());
+    }
+
+    /** @test */
+    function it_wraps_the_mentioned_username_with_anchor_tag()
+    {
+        $this->signIn();
+        $reply = new Reply(['body' => 'Hi @JohnDoe']);
+
+        $this->assertEquals(
+            'Hi <a href="' . route('profile.show', [auth()->user()]) . '">@JohnDoe</a>',
+            $reply->body
+        );
     }
 }
