@@ -12,6 +12,8 @@ require('./bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+require('./jquery-plugins/jquery.caret');
+
 Vue.component('flash', require('./components/Flash.vue'));
 Vue.component('thread-view', require('./components/Thread.vue'));
 Vue.component(
@@ -22,3 +24,4 @@ Vue.component(
 const app = new Vue({
     el: '#app'
 });
+

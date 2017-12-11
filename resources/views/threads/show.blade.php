@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('head')
+    <link rel="stylesheet" href="/css/vendor/jquery.atwho.min.css">
+@endsection
+
 @section('content')
     <thread-view :attributes="{{ $thread }}" inline-template>
         <div class="container">
@@ -39,7 +43,9 @@
                             {{ csrf_field() }}
                             <textarea name="body"
                                       class="form-control"
-                                      id="" cols="30" rows="5"></textarea><br>
+                                      id="reply" cols="30" rows="5"
+                            >
+                            </textarea><br>
                             <button type="submit" class="btn btn-primary">
                                 Add
                             </button>

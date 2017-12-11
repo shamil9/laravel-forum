@@ -29,4 +29,16 @@ class UserNotificationTest extends TestCase
         // Jane should receive a notification
         $this->assertCount(1, $jane->notifications);
     }
+
+    /** @test */
+    function it_should_fetch_mentioned_user_name()
+    {
+        factory(User::class)->create(['name' => 'John']);
+        factory(User::class)->create(['name' => 'Jane']);
+        factory(User::class)->create(['name' => 'John']);
+
+        $results = $this->json('GET', route('api.users.index'), ['name' => 'Jo']);
+
+        $this->assertCount(2, $results->json());
+    }
 }

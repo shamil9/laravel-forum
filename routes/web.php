@@ -47,4 +47,7 @@ Route::get('/notifications', 'NotificationsController@index')
 Route::get('/notifications/read', 'NotificationsController@markAsRead')
     ->name('notification.read');
 
+Route::get('/api/users', 'Api\UsersController@index')
+    ->name('api.users.index');
+
 Auth::routes();
