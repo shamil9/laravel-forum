@@ -86,17 +86,15 @@ class ReadThreadsTest extends TestCase
     /** @test */
     public function a_user_can_filter_threads_by_popularity()
     {
-        $threadWhithTwoReply = factory(Thread::class)->create();
-        factory(Reply::class, 2)->create(['thread_id' => $threadWhithTwoReply->id]);
+        $threadWithTwoReply = factory(Thread::class)->create();
+        factory(Reply::class, 2)->create(['thread_id' => $threadWithTwoReply->id]);
 
-        $threadWhithThreeReply = factory(Thread::class)->create();
-        factory(Reply::class, 3)->create(['thread_id' => $threadWhithThreeReply->id]);
-
-        $threadWhithNoReply = $this->thread;
+        $threadWithThreeReply = factory(Thread::class)->create();
+        factory(Reply::class, 3)->create(['thread_id' => $threadWithThreeReply->id]);
 
         $response = $this->getJson('threads?popularity=1')->json();
 
-        $this->assertEquals([3, 2, 1], array_column($response, 'replies_count'));
+        $this->assertEquals([3, 2, 1], array_column($response['data'], 'replies_count'));
     }
 
     /** @test */

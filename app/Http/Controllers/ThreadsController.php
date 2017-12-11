@@ -22,7 +22,9 @@ class ThreadsController extends Controller
      */
     public function index(ThreadFilters $filters)
     {
-        $threads = Thread::filter($filters)->latest()->get();
+        $threads = Thread::filter($filters)
+            ->latest()
+            ->paginate(20);
         $channel = null;
 
         if (request()->wantsJson()) {
@@ -36,14 +38,15 @@ class ThreadsController extends Controller
      * @param Channel $channel
      * @param Thread  $thread
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Exception
      */
     public function show(Channel $channel, Thread $thread)
     {
         cache()->forever($thread->lastVisitTimeKey(), Carbon::now());
 
         return view('threads/show', [
-            'thread' => $thread,
-            'replies' => $thread->replies()->paginate(20)
+            'thread'  => $thread,
+            'replies' => $thread->replies()->paginate(20),
         ]);
     }
 
@@ -55,22 +58,22 @@ class ThreadsController extends Controller
     public function store(Request $request, Spam $spam)
     {
         $this->validate($request, [
-            'title' => 'required',
-            'body' => 'required',
+            'title'      => 'required',
+            'body'       => 'required',
             'channel_id' => 'required|exists:channels,id',
         ]);
 
         $spam->check($request->body);
 
         $thread = Thread::create([
-            'user_id' => auth()->id(),
+            'user_id'    => auth()->id(),
             'channel_id' => $request->channel_id,
-            'body' => $request->body,
-            'title' => $request->title,
+            'body'       => $request->body,
+            'title'      => $request->title,
         ]);
 
         return redirect(route('threads.show', [
-            'thread' => $thread->id,
+            'thread'  => $thread->id,
             'channel' => $thread->channel->id,
         ]))->with('flash', 'Thread created');
     }
@@ -87,6 +90,9 @@ class ThreadsController extends Controller
     /**
      * @param  Channel $channel
      * @param  Thread  $thread
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function destroy(Channel $channel, Thread $thread)
     {

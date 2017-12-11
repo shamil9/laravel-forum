@@ -13,6 +13,7 @@
                     <h3> Forum Threads </h3>
                 </div>
                 @each ('threads.partials.thread', $threads, 'thread')
+                {{ $threads->links() }}
             </div>
         </div>
     </div>
