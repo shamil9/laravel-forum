@@ -50,4 +50,7 @@ Route::get('/notifications/read', 'NotificationsController@markAsRead')
 Route::get('/api/users', 'Api\UsersController@index')
     ->name('api.users.index');
 
+Route::post('/api/avatar/{user}', 'Api\AvatarController@store')
+    ->name('api.avatar.store');
+
 Auth::routes();
