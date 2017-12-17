@@ -25,8 +25,8 @@ class AddAvatarPathToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('avatar_path');
-        });
+//        Schema::table('users', function (Blueprint $table) {
+//            $table->dropColumn('avatar_path');
+//        });
     }
 }

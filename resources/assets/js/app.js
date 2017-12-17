@@ -14,6 +14,7 @@ require('./bootstrap');
 
 require('./jquery-plugins/jquery.caret');
 
+Vue.component('file-input', require('./components/FileInput.vue'))
 Vue.component('flash', require('./components/Flash.vue'));
 Vue.component('thread-view', require('./components/Thread.vue'));
 Vue.component(
