@@ -9,7 +9,10 @@
             </h5>
 
             <div>
-                <favorite route="{{ route('favorites.store', $reply) }}" :reply="{{ $reply }}"></favorite>
+                <favorite
+                        route="{{ route('favorites.store', $reply) }}"
+                        :reply="{{ $reply }}">
+                </favorite>
             </div>
         </div>
 

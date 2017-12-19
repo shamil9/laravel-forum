@@ -8,6 +8,7 @@ use App\Inspections\Spam;
 use App\Thread;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 
 class ThreadsController extends Controller
 {
@@ -26,12 +27,13 @@ class ThreadsController extends Controller
             ->latest()
             ->paginate(20);
         $channel = null;
+        $trending = array_map('json_decode', Redis::zrevrange('trending_threads', 0, 4));
 
         if (request()->wantsJson()) {
             return $threads;
         }
 
-        return view('threads/index', compact('threads', 'channel'));
+        return view('threads/index', compact('threads', 'channel', 'trending'));
     }
 
     /**
@@ -43,6 +45,14 @@ class ThreadsController extends Controller
     public function show(Channel $channel, Thread $thread)
     {
         cache()->forever($thread->lastVisitTimeKey(), Carbon::now());
+
+        Redis::zincrby('trending_threads', 1, json_encode([
+            'title' => $thread->title,
+            'path'  => route('threads.show', [
+                'channel' => $thread->channel_id,
+                'thread'  => $thread,
+            ]),
+        ]));
 
         return view('threads/show', [
             'thread'  => $thread,
