@@ -6,9 +6,9 @@ use App\Channel;
 use App\Filters\ThreadFilters;
 use App\Inspections\Spam;
 use App\Thread;
+use App\Trending;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
 
 class ThreadsController extends Controller
 {
@@ -19,15 +19,16 @@ class ThreadsController extends Controller
 
     /**
      * @param ThreadFilters $filters
+     * @param Trending      $trending
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index(ThreadFilters $filters)
+    public function index(ThreadFilters $filters, Trending $trending)
     {
         $threads = Thread::filter($filters)
             ->latest()
             ->paginate(20);
         $channel = null;
-        $trending = array_map('json_decode', Redis::zrevrange('trending_threads', 0, 4));
+        $trending = $trending->get();
 
         if (request()->wantsJson()) {
             return $threads;
@@ -37,22 +38,17 @@ class ThreadsController extends Controller
     }
 
     /**
-     * @param Channel $channel
-     * @param Thread  $thread
+     * @param Channel  $channel
+     * @param Thread   $thread
+     * @param Trending $trending
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Exception
      */
-    public function show(Channel $channel, Thread $thread)
+    public function show(Channel $channel, Thread $thread, Trending $trending)
     {
         cache()->forever($thread->lastVisitTimeKey(), Carbon::now());
 
-        Redis::zincrby('trending_threads', 1, json_encode([
-            'title' => $thread->title,
-            'path'  => route('threads.show', [
-                'channel' => $thread->channel_id,
-                'thread'  => $thread,
-            ]),
-        ]));
+        $trending->push($thread);
 
         return view('threads/show', [
             'thread'  => $thread,

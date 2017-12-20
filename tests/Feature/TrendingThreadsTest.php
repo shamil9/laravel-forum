@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Thread;
+use App\Trending;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Redis;
 use Tests\TestCase;
@@ -11,10 +12,14 @@ class TrendingThreadsTest extends TestCase
 {
     use DatabaseMigrations;
 
+    private $trending;
+
     protected function setUp()
     {
         parent::setUp();
-        Redis::del('trending_threads');
+        $this->trending = new Trending();
+        Redis::del($this->trending->cacheKey());
+
     }
 
 
@@ -22,7 +27,7 @@ class TrendingThreadsTest extends TestCase
     function it_increments_thread_view_count_on_each_visit()
     {
         $thread = factory(Thread::class)->create();
-        $trending = Redis::zrevrange('trending_threads', 0, 4);
+        $trending = $this->trending->get();
 
         $this->assertEmpty($trending);
 
@@ -31,8 +36,8 @@ class TrendingThreadsTest extends TestCase
             'thread'  => $thread,
         ]));
 
-        $trending = Redis::zrevrange('trending_threads', 0, 4);
+        $trending = $this->trending->get();
 
-        $this->assertCount(1, $trending);
+        $this->assertEquals($thread->title, $trending[0]->title);
     }
 }
