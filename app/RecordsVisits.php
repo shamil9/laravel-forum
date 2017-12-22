@@ -55,7 +55,9 @@ class RecordsVisits
      */
     public function cacheKey()
     {
-        return "thread.{$this->thread->id}.views";
+        return app()->environment('testing') ?
+            "testing.thread.{$this->thread->id}.views" :
+            "thread.{$this->thread->id}.views";
     }
 
     /**
