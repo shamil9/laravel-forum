@@ -22,9 +22,8 @@ class TrendingThreadsTest extends TestCase
 
     }
 
-
     /** @test */
-    function it_increments_thread_view_count_on_each_visit()
+    function it_shows_trending_thread()
     {
         $thread = factory(Thread::class)->create();
         $trending = $this->trending->get();

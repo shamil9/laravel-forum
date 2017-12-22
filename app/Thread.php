@@ -107,4 +107,9 @@ class Thread extends Model
 
         return sprintf('user.%s.visits.%s', $user, $this->id);
     }
+
+    public function visits()
+    {
+        return new RecordsVisits($this);
+    }
 }
