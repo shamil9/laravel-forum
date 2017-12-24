@@ -23,7 +23,7 @@
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <ul>
-                            @foreach($trending as $thread)
+                            @foreach(App\Trending::get() as $thread)
                                 <li>
                                     <a href="{{ url($thread->path) }}">{{ $thread->title }}</a>
                                 </li>

@@ -12,21 +12,18 @@ class TrendingThreadsTest extends TestCase
 {
     use DatabaseMigrations;
 
-    private $trending;
-
     protected function setUp()
     {
         parent::setUp();
-        $this->trending = new Trending();
-        Redis::del($this->trending->cacheKey());
-
+        Redis::del(Trending::cacheKey());
     }
 
     /** @test */
     function it_shows_trending_thread()
     {
         $thread = factory(Thread::class)->create();
-        $trending = $this->trending->get();
+
+        $trending = $thread->trending()->get();
 
         $this->assertEmpty($trending);
 
@@ -35,7 +32,7 @@ class TrendingThreadsTest extends TestCase
             'thread'  => $thread,
         ]));
 
-        $trending = $this->trending->get();
+        $trending = $thread->trending()->get();
 
         $this->assertEquals($thread->title, $trending[0]->title);
     }

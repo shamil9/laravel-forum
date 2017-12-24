@@ -6,7 +6,6 @@ use App\Channel;
 use App\Filters\ThreadFilters;
 use App\Inspections\Spam;
 use App\Thread;
-use App\Trending;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -19,36 +18,33 @@ class ThreadsController extends Controller
 
     /**
      * @param ThreadFilters $filters
-     * @param Trending      $trending
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index(ThreadFilters $filters, Trending $trending)
+    public function index(ThreadFilters $filters)
     {
         $threads = Thread::filter($filters)
             ->latest()
             ->paginate(20);
         $channel = null;
-        $trending = $trending->get();
 
         if (request()->wantsJson()) {
             return $threads;
         }
 
-        return view('threads/index', compact('threads', 'channel', 'trending'));
+        return view('threads/index', compact('threads', 'channel'));
     }
 
     /**
-     * @param Channel  $channel
-     * @param Thread   $thread
-     * @param Trending $trending
+     * @param Channel $channel
+     * @param Thread  $thread
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Exception
      */
-    public function show(Channel $channel, Thread $thread, Trending $trending)
+    public function show(Channel $channel, Thread $thread)
     {
         cache()->forever($thread->lastVisitTimeKey(), Carbon::now());
 
-        $trending->push($thread);
+        $thread->trending()->push($thread);
 
         return view('threads/show', [
             'thread'  => $thread,

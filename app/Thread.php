@@ -112,4 +112,9 @@ class Thread extends Model
     {
         return new RecordsVisits($this);
     }
+
+    public function trending()
+    {
+        return new Trending();
+    }
 }
