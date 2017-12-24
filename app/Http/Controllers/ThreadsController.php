@@ -23,6 +23,8 @@ class ThreadsController extends Controller
     public function index(ThreadFilters $filters)
     {
         $threads = Thread::filter($filters)
+            ->with('owner')
+            ->withCount('replies')
             ->latest()
             ->paginate(20);
         $channel = null;
