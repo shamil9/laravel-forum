@@ -15,8 +15,8 @@
 
 use App\Channel;
 use App\Reply;
-use App\User;
 use App\Thread;
+use App\User;
 
 $factory->define(User::class, function (Faker\Generator $faker) {
     static $password;
@@ -26,27 +26,29 @@ $factory->define(User::class, function (Faker\Generator $faker) {
         'email'          => $faker->unique()->safeEmail,
         'password'       => $password ?: $password = bcrypt('secret'),
         'remember_token' => str_random(10),
+        'confirmed'      => false,
     ];
 });
 
 $factory->define(Channel::class, function (Faker\Generator $faker) {
     $name = $faker->word;
+
     return [
         'name' => $name,
-        'slug' => $name
+        'slug' => $name,
     ];
 });
 
 $factory->define(Thread::class, function (Faker\Generator $faker) {
     return [
-        'user_id' => function () {
+        'user_id'    => function () {
             return factory('App\User')->create()->id;
         },
         'channel_id' => function () {
             return factory('App\Channel')->create()->id;
         },
-        'title'   => $faker->sentence,
-        'body'    => $faker->paragraph,
+        'title'      => $faker->sentence,
+        'body'       => $faker->paragraph,
     ];
 });
 
@@ -55,7 +57,7 @@ $factory->define(Reply::class, function (Faker\Generator $faker) {
         'thread_id' => function () {
             return factory('App\Thread')->create()->id;
         },
-        'user_id' => function () {
+        'user_id'   => function () {
             return factory('App\User')->create()->id;
         },
         'body'      => $faker->paragraph(),

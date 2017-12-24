@@ -22,7 +22,7 @@ class CreateThreadTest extends TestCase
 
         $this->user = factory(User::class)->create();
         $this->channel = factory(Channel::class)->create();
-        $this->thread = factory('App\Thread')->create([
+        $this->thread = factory(Thread::class)->create([
             'user_id' => $this->user->id,
             'channel_id' => $this->channel->id,
         ]);
@@ -99,5 +99,23 @@ class CreateThreadTest extends TestCase
             route('threads.store', ['channel' => $thread->channel_id]),
             $thread->toArray()
         );
+    }
+
+    /** @test */
+    function new_users_should_confirm_email_address_before_adding_threads()
+    {
+        $this->withExceptionHandling();
+
+        $this->signIn($this->user);
+
+        $this->post(
+            route('threads.store', [
+                'channel' => $this->thread->channel_id,
+                'thread'  => $this->thread,
+            ]),
+            $this->thread->toArray()
+        )
+            ->assertRedirect(route('all.threads.index'))
+            ->assertSessionHas('flash', 'You must confirm your email before creating threads');
     }
 }
