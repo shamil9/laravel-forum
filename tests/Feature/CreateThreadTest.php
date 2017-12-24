@@ -76,20 +76,10 @@ class CreateThreadTest extends TestCase
             ->assertSessionHasErrors('channel_id');
     }
 
-    public function threadRequires($fields)
-    {
-        $this->withExceptionHandling()->be($this->user);
-
-        return $this->post(
-            route('threads.store', ['channel' => $this->thread->channel->id]),
-            array_merge($this->thread->toArray(), $fields)
-        );
-    }
-
     /** @test */
     public function it_checks_if_thread_body_contains_spam()
     {
-        $this->signIn();
+        $this->signIn($this->user);
 
         $thread = factory(Thread::class)->create(['body' => 'Yahoo customer support']);
 
@@ -105,8 +95,9 @@ class CreateThreadTest extends TestCase
     function new_users_should_confirm_email_address_before_adding_threads()
     {
         $this->withExceptionHandling();
+        $user = factory(User::class)->create(['confirmed' => false]);
 
-        $this->signIn($this->user);
+        $this->signIn($user);
 
         $this->post(
             route('threads.store', [
@@ -117,5 +108,15 @@ class CreateThreadTest extends TestCase
         )
             ->assertRedirect(route('all.threads.index'))
             ->assertSessionHas('flash', 'You must confirm your email before creating threads');
+    }
+
+    public function threadRequires($fields)
+    {
+        $this->withExceptionHandling()->be($this->user);
+
+        return $this->post(
+            route('threads.store', ['channel' => $this->thread->channel->id]),
+            array_merge($this->thread->toArray(), $fields)
+        );
     }
 }
