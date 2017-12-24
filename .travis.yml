@@ -1,0 +1,15 @@
+language: php
+
+php:
+  - 7.1
+
+services:
+  - redis-server
+
+before_script:
+  - composer install --no-interaction
+  - cp .env.example .env
+
+script:
+  - php artisan key:generate
+  - vendor/bin/phpunit
