@@ -53,4 +53,6 @@ Route::get('/api/users', 'Api\UsersController@index')
 Route::post('/api/avatar/{user}', 'Api\AvatarController@store')
     ->name('api.avatar.store');
 
+Route::get('/confirm/{token}', 'Auth\ConfirmationController@confirm')
+    ->name('confirm');
 Auth::routes();

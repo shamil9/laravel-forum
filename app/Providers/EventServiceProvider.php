@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\RegisteredUser;
+use App\Events\ThreadReceivedNewReply;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -12,9 +14,13 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\ThreadReceivedNewReply' => [
+        ThreadReceivedNewReply::class => [
             'App\Listeners\NotifyMentionedUsers',
             'App\Listeners\NotifySubscribers',
+        ],
+
+        RegisteredUser::class => [
+            'App\Listeners\SendConfirmationMail',
         ],
     ];
 
