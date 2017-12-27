@@ -48,4 +48,12 @@ class RegistrationTest extends TestCase
 
         $this->assertTrue($user->fresh()->confirmed);
     }
+
+    /** @test */
+    function unknown_token_should_fail()
+    {
+        $this->get(route('confirm', ['token' => 'foobar']))
+            ->assertRedirect(route('all.threads.index'))
+            ->assertSessionHas('flash', 'Invalid Token');
+    }
 }

@@ -16,8 +16,14 @@ class ConfirmationController extends Controller
      */
     public function confirm($token)
     {
-        User::where('confirmation_token', $token)
-            ->update(['confirmed' => true]);
+        try {
+            User::where('confirmation_token', $token)
+                ->firstOrFail()
+                ->update(['confirmed' => true, 'token' => null]);
+        } catch (\Exception $e) {
+            return redirect(route('all.threads.index'))
+                ->with('flash', 'Invalid Token');
+        }
 
         return redirect(route('all.threads.index'))
             ->with('flash', 'Your account is now confirmed');
