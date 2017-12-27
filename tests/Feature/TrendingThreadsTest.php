@@ -21,19 +21,29 @@ class TrendingThreadsTest extends TestCase
     /** @test */
     function it_shows_trending_thread()
     {
-        $thread = factory(Thread::class)->create();
+        $threads = factory(Thread::class, 3)->create();
 
-        $trending = $thread->trending()->get();
+        $trending = $threads->first()->trending()->get();
 
         $this->assertEmpty($trending);
 
+        // Visit all threads
+        $threads->map(function ($thread) {
+            $this->get(route('threads.show', [
+                'channel' => $thread->channel_id,
+                'thread'  => $thread,
+            ]));
+        });
+
+        // Visit last thread once more
         $this->get(route('threads.show', [
-            'channel' => $thread->channel_id,
-            'thread'  => $thread,
+            'channel' => $threads->values()->get(2)->channel_id,
+            'thread'  => $threads->values()->get(2),
         ]));
 
-        $trending = $thread->trending()->get();
+        $trending = $threads->first()->trending()->get();
 
-        $this->assertEquals($thread->title, $trending[0]->title);
+        // Last thread should be on top
+        $this->assertEquals($threads->values()->get(2)->title, $trending[0]->title);
     }
 }

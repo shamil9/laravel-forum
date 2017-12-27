@@ -6,4 +6,4 @@
 
 ## About
 
-Forum software, buil using TDD, Laravel and VueJS 
+Forum software, built using TDD, Laravel and VueJS 
