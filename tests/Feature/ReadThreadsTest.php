@@ -42,8 +42,8 @@ class ReadThreadsTest extends TestCase
     public function a_user_can_view_thread()
     {
         $this->get(route('threads.show', [
-            'thread'  => $this->thread->id,
-            'channel' => $this->thread->channel->id,
+            'thread'  => $this->thread,
+            'channel' => $this->thread->channel,
         ]))
             ->assertSee($this->thread->title);
     }
@@ -52,8 +52,8 @@ class ReadThreadsTest extends TestCase
     public function a_user_can_read_replies_in_the_thread()
     {
         $this->get(route('threads.show', [
-            'thread'  => $this->thread->id,
-            'channel' => $this->thread->channel->id,
+            'thread'  => $this->thread,
+            'channel' => $this->thread->channel,
         ]))
             ->assertSee($this->reply->body);
     }

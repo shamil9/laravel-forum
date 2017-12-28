@@ -97,4 +97,29 @@ class ThreadsTest extends TestCase
 
         $this->assertFalse($thread->hasUpdates());
     }
+
+    /** @test */
+    function a_thread_should_have_unique_slug()
+    {
+        $this->signIn();
+
+        $thread = factory(Thread::class)->create([
+            'title' => 'foo bar',
+            'slug'  => 'foo-bar',
+        ]);
+
+        $this->post(route('threads.store', [
+            'thread'  => $thread,
+            'channel' => $thread->channel,
+        ]), $thread->toArray());
+
+        $this->assertEquals('foo-bar-2', Thread::latest('id')->first()->slug);
+
+        $this->post(route('threads.store', [
+            'thread'  => $thread,
+            'channel' => $thread->channel,
+        ]), $thread->toArray());
+
+        $this->assertEquals('foo-bar-3', Thread::latest('id')->first()->slug);
+    }
 }

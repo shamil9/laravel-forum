@@ -66,11 +66,12 @@ class ThreadsController extends Controller
             'channel_id' => $request->channel_id,
             'body'       => $request->body,
             'title'      => $request->title,
+            'slug'       => $request->title,
         ]);
 
         return redirect(route('threads.show', [
-            'thread'  => $thread->id,
-            'channel' => $thread->channel->id,
+            'thread'  => $thread,
+            'channel' => $thread->channel,
         ]))->with('flash', 'Thread created');
     }
 

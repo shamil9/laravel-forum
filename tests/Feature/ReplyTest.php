@@ -45,8 +45,8 @@ class ReplyTest extends TestCase
             route(
                 'threads.show',
                 [
-                    'thread'  => $this->thread->id,
-                    'channel' => $this->thread->channel->id,
+                    'thread'  => $this->thread,
+                    'channel' => $this->thread->channel,
                 ]
             )
         )->assertSee($this->reply->body);
@@ -63,8 +63,8 @@ class ReplyTest extends TestCase
             route(
                 'replies.store',
                 [
-                    'thread'  => $this->thread->id,
-                    'channel' => $this->thread->channel->id,
+                    'thread'  => $this->thread,
+                    'channel' => $this->thread->channel,
                 ]
             )
         );
@@ -80,7 +80,7 @@ class ReplyTest extends TestCase
         $this->signIn($user);
 
         $this->post(
-            route('replies.store', ['thread' => $this->thread->id]),
+            route('replies.store', ['thread' => $this->thread]),
             $reply->toArray()
         )->assertSessionHasErrors('body');
     }
@@ -92,7 +92,7 @@ class ReplyTest extends TestCase
 
         $reply = factory(Reply::class)->create();
 
-        $this->delete(route('replies.destroy', ['thread' => $reply->thread->id]))
+        $this->delete(route('replies.destroy', ['thread' => $reply->thread]))
             ->assertRedirect(route('login'));
     }
 
@@ -175,12 +175,12 @@ class ReplyTest extends TestCase
         $this->signIn($user);
 
         $this->post(
-            route('replies.store', ['thread' => $this->thread->id,]),
+            route('replies.store', ['thread' => $this->thread,]),
             $reply->toArray()
         )->assertStatus(302);
 
         $this->post(
-            route('replies.store', ['thread' => $this->thread->id,]),
+            route('replies.store', ['thread' => $this->thread,]),
             $reply->toArray()
         )->assertStatus(403);
     }
