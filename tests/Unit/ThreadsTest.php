@@ -113,13 +113,8 @@ class ThreadsTest extends TestCase
             'channel' => $thread->channel,
         ]), $thread->toArray());
 
-        $this->assertEquals('foo-bar-2', Thread::latest('id')->first()->slug);
+        $timestamp = (new \DateTime)->getTimestamp();
 
-        $this->post(route('threads.store', [
-            'thread'  => $thread,
-            'channel' => $thread->channel,
-        ]), $thread->toArray());
-
-        $this->assertEquals('foo-bar-3', Thread::latest('id')->first()->slug);
+        $this->assertEquals('foo-bar-' . $timestamp, Thread::latest('id')->first()->slug);
     }
 }

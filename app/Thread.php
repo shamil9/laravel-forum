@@ -125,26 +125,13 @@ class Thread extends Model
 
     public function setSlugAttribute($value)
     {
-        if (static::whereSlug($slug = str_slug($value))->exists()) {
-            $slug = $this->incrementSlug($slug);
-            $this->attributes['slug'] = $slug;
+        $value = str_slug($value);
+
+        if (! static::whereSlug($value)->exists()) {
+            return $this->attributes['slug'] = $value;
         }
 
-        $this->attributes['slug'] = $slug;
+        return $this->attributes['slug'] = $value . '-' . (new \DateTime)->getTimestamp();
 
-    }
-
-    private function incrementSlug($value)
-    {
-        $max = static::whereTitle($this->title)->latest('id')->value('slug');
-
-        // Increment last digit on duplicate slug
-        if (is_numeric($max[-1])) {
-            return preg_replace_callback('/(\d+)$/', function ($matches) {
-                return $matches[0] + 1;
-            }, $max);
-        }
-
-        return "{$value}-2";
     }
 }
