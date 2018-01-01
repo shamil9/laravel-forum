@@ -10,6 +10,11 @@ class ThreadPolicy
 {
     use HandlesAuthorization;
 
+    public function update(User $user, Thread $thread)
+    {
+        return $thread->user_id == auth()->id();
+    }
+
     public function destroy(User $user, Thread $thread)
     {
         return $thread->user_id == auth()->id();

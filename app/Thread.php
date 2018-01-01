@@ -134,4 +134,9 @@ class Thread extends Model
         return $this->attributes['slug'] = $value . '-' . (new \DateTime)->getTimestamp();
 
     }
+
+    public function bestReply()
+    {
+        return $this->hasOne(BestReply::class);
+    }
 }

@@ -16,11 +16,13 @@
 Route::get('threads', 'ThreadsController@index')
     ->name('all.threads.index');
 
+Route::post('/threads/{thread}/replies/{reply}', 'BestReplyController@store')
+    ->name('best.reply.store');
 Route::post('/threads/{thread}/replies', 'RepliesController@store')
     ->name('replies.store');
-Route::delete('/threads/{reply}', 'RepliesController@destroy')
+Route::delete('/reply/{reply}', 'RepliesController@destroy')
     ->name('replies.destroy');
-Route::patch('/threads/{reply}', 'RepliesController@update')
+Route::patch('/reply/{reply}', 'RepliesController@update')
     ->name('replies.update');
 
 Route::resource('channels', 'ChannelController');
@@ -55,4 +57,5 @@ Route::post('/api/avatar/{user}', 'Api\AvatarController@store')
 
 Route::get('/confirm/{token}', 'Auth\ConfirmationController@confirm')
     ->name('confirm');
+
 Auth::routes();
