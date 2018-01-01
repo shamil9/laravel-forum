@@ -1,5 +1,5 @@
 <reply route="{{ route('replies.update', $reply) }}" :attributes="{{ $reply }}" inline-template>
-    <div class="panel panel-default" id="reply-{{ $reply->id }}">
+    <div :class="panel" id="reply-{{ $reply->id }}">
         <div class="level panel-heading">
             <h5 class="flex">
                 By <a href="{{ route('profile.show', $reply->owner) }}">
@@ -28,7 +28,14 @@
                     </div>
                 </form>
             </div>
-            <div v-else v-html="body"></div>
+            <div v-else class="level">
+                <div class="flex">@{{ body }}</div>
+                <div>
+                    <a @click.prevent="toggleBest" href="#" :class="icon" title="Mark as best">
+                        <h1 class="glyphicon glyphicon-ok"></h1>
+                    </a>
+                </div>
+            </div>
         </div>
 
         @can('update', $reply)

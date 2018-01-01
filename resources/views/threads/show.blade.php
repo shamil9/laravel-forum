@@ -39,7 +39,7 @@
 
                     @if(auth()->check())
                         <form method="post" class="form-group"
-                              action="{{ route('replies.store', ['thread' => $thread->id]) }}">
+                              action="{{ route('replies.store', $thread) }}">
                             {{ csrf_field() }}
                             <textarea name="body"
                                       class="form-control"

@@ -39,7 +39,12 @@ class ReplyTest extends TestCase
     /** @test */
     public function authenticated_user_may_add_replies()
     {
-        $this->be($this->user);
+        $this->signIn();
+
+        $this->post(
+            route('replies.store', $this->thread),
+            $this->thread->toArray()
+        );
 
         $this->get(
             route(
@@ -51,7 +56,7 @@ class ReplyTest extends TestCase
             )
         )->assertSee($this->reply->body);
 
-        $this->assertEquals(1, $this->thread->fresh()->replies_count);
+        $this->assertEquals(2, $this->thread->fresh()->replies_count);
     }
 
     /** @test */

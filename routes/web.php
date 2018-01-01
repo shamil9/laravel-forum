@@ -13,17 +13,20 @@
 |
 */
 
+Route::get('/', 'ThreadsController@index')
+    ->name('all.threads.index');
+
 Route::get('threads', 'ThreadsController@index')
     ->name('all.threads.index');
 
-Route::post('/threads/{thread}/replies/{reply}', 'BestReplyController@store')
-    ->name('best.reply.store');
 Route::post('/threads/{thread}/replies', 'RepliesController@store')
     ->name('replies.store');
 Route::delete('/reply/{reply}', 'RepliesController@destroy')
     ->name('replies.destroy');
 Route::patch('/reply/{reply}', 'RepliesController@update')
     ->name('replies.update');
+Route::post('/threads/{thread}/best-reply/{reply}', 'BestReplyController@store')
+    ->name('best.reply.store');
 
 Route::resource('channels', 'ChannelController');
 Route::resource('channels/{channel}/threads', 'ThreadsController');

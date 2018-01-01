@@ -5,11 +5,17 @@
 
     export default {
         components: { Reply, SubscribeButton },
+
         props: ['attributes'],
+
         data() {
             return {
                 repliesCount: this.attributes.replies_count
             }
+        },
+
+        created () {
+            window.events.$on('markAsBest', id => console.log(id))
         },
 
         mounted () {

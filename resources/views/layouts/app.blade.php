@@ -36,6 +36,18 @@
         .new-notification {
             color: red;
         }
+
+        .best-reply {
+            color: rgba(0, 0, 0, .2);
+        }
+
+        .best-reply:hover,
+        .best-reply:focus,
+        .best-reply__active,
+        .best-reply__active:hover,
+        .best-reply__active:focus {
+            color: #2ab27b;
+        }
     </style>
 
     @yield('head')
@@ -79,8 +91,6 @@
                                 @endforeach
                             </ul>
                         </li>
-
-                        <li><a href="{{ route('all.threads.index') }}">All threads</a></li>
                         <li>
                             <a href="{{ route('all.threads.index') }}?popularity=1">
                                 Popular threads

@@ -1,5 +1,6 @@
 <script>
     import favorite from './Favorite.vue'
+
     export default {
         props: ['attributes', 'route'],
 
@@ -8,7 +9,18 @@
         data() {
             return {
                 isEditing: false,
-                body: this.attributes.body
+                body: this.attributes.body,
+                isBest: false
+            }
+        },
+
+        computed: {
+            icon () {
+                return this.isBest ? 'best-reply__active' : 'best-reply'
+            },
+
+            panel () {
+                return this.isBest ? 'panel panel-success' : 'panel panel-default'
             }
         },
 
@@ -34,7 +46,12 @@
                     .catch((error) => {
                         flash('Error!')
                     })
-                }
+            },
+
+            toggleBest () {
+                this.isBest = !this.isBest
+                window.events.$emit('markAsBest', this.attributes.id)
+            }
         }
     }
 </script>
