@@ -4,47 +4,41 @@ namespace App\Http\Controllers;
 
 use App\BestReply;
 use App\Reply;
-use App\Thread;
 
 class BestReplyController extends Controller
 {
     /**
      * Store a newly created resource in storage.
      *
-     * @param Thread $thread
-     * @param Reply  $reply
+     * @param Reply $reply
      * @return void
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function store(Thread $thread, Reply $reply)
+    public function store(Reply $reply)
     {
-        $this->authorize('update', $thread);
+        $this->authorize('update', $reply->thread);
+
+        if ($reply->thread->bestReply()->exists()) {
+            $this->destroy($reply);
+        }
 
         BestReply::create([
-            'thread_id' => $thread->id,
+            'thread_id' => $reply->thread->id,
             'reply_id'  => $reply->id,
         ]);
     }
 
     /**
-     * Display the specified resource.
+     * Remove the specified resource.
      *
-     * @param  \App\BestReply $bestReply
-     * @return \Illuminate\Http\Response
+     * @param Reply $reply
+     * @return void
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function show(BestReply $bestReply)
+    public function destroy(Reply $reply)
     {
-        //
-    }
+        $this->authorize('update', $reply->thread);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\BestReply $bestReply
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(BestReply $bestReply)
-    {
-        //
+        $reply->thread->bestReply()->delete();
     }
 }

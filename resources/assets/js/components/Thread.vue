@@ -14,10 +14,6 @@
             }
         },
 
-        created () {
-            window.events.$on('markAsBest', id => console.log(id))
-        },
-
         mounted () {
             $('#reply').atwho({
                 at: "@",

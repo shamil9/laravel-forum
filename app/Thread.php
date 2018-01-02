@@ -13,6 +13,7 @@ class Thread extends Model
 
     protected $guarded = [];
     protected $with = [];
+    protected $appends = ['best_reply_id'];
 
     protected static function boot()
     {
@@ -138,5 +139,10 @@ class Thread extends Model
     public function bestReply()
     {
         return $this->hasOne(BestReply::class);
+    }
+
+    public function getBestReplyIdAttribute()
+    {
+        return $this->bestReply()->value('reply_id');
     }
 }

@@ -25,8 +25,10 @@ Route::delete('/reply/{reply}', 'RepliesController@destroy')
     ->name('replies.destroy');
 Route::patch('/reply/{reply}', 'RepliesController@update')
     ->name('replies.update');
-Route::post('/threads/{thread}/best-reply/{reply}', 'BestReplyController@store')
+Route::post('/best-reply/{reply}', 'BestReplyController@store')
     ->name('best.reply.store');
+Route::delete('/best-reply/{reply}', 'BestReplyController@destroy')
+    ->name('best.reply.destroy');
 
 Route::resource('channels', 'ChannelController');
 Route::resource('channels/{channel}/threads', 'ThreadsController');

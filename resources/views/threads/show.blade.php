@@ -33,7 +33,23 @@
                         </div>
                     </div>
 
-                    @each('threads/partials/reply', $thread->replies, 'reply')
+                    @if($thread->bestReply()->exists())
+                        <h3>Best Reply</h3>
+
+                        @include(
+                            'threads.partials.reply',
+                            ['reply' => $thread->bestReply->reply, 'best' => true]
+                        )
+
+                        <hr>
+                    @endif
+
+                    @foreach($thread->replies as $reply)
+                        @include(
+                             'threads.partials.reply',
+                             ['reply' => $reply, 'best' => false]
+                        )
+                    @endforeach
 
                     {{ $replies->links() }}
 

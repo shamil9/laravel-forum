@@ -37,15 +37,15 @@
             color: red;
         }
 
-        .best-reply {
+        .best-reply,
+        .best-reply__active:hover,
+        .best-reply__active:focus {
             color: rgba(0, 0, 0, .2);
         }
 
-        .best-reply:hover,
-        .best-reply:focus,
         .best-reply__active,
-        .best-reply__active:hover,
-        .best-reply__active:focus {
+        .best-reply:hover,
+        .best-reply:focus {
             color: #2ab27b;
         }
     </style>

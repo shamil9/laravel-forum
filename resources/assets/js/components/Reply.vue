@@ -2,7 +2,7 @@
     import favorite from './Favorite.vue'
 
     export default {
-        props: ['attributes', 'route'],
+        props: [ 'attributes', 'route', 'best' ],
 
         components: { favorite },
 
@@ -10,7 +10,18 @@
             return {
                 isEditing: false,
                 body: this.attributes.body,
-                isBest: false
+                isBest: this.best
+            }
+        },
+
+        created () {
+            window.events.$on('markAsBest', id => this.isBest = (id === this.attributes.id))
+
+            window.events.$on('unMarkAsBest', () => this.isBest = false)
+
+            const id = this.$parent.attributes.best_reply_id
+            if ( id === this.attributes.id ) {
+                this.isBest = (id === this.attributes.id)
             }
         },
 
@@ -48,9 +59,27 @@
                     })
             },
 
-            toggleBest () {
-                this.isBest = !this.isBest
-                window.events.$emit('markAsBest', this.attributes.id)
+            markAsBest (route) {
+                window.axios.post(route)
+                    .then((response) => {
+                        flash('Reply marked as best!')
+                        this.isBest = true
+                        window.events.$emit('markAsBest', this.attributes.id)
+                    })
+                    .catch((error) => {
+                        flash('Error!')
+                    })
+            },
+
+            unMarkAsBest (route) {
+                window.axios.delete(route)
+                    .then((response) => {
+                        flash('Best reply removed')
+                        window.events.$emit('unMarkAsBest', this.attributes.id)
+                    })
+                    .catch((error) => {
+                        flash('Error!')
+                    })
             }
         }
     }

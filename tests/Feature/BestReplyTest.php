@@ -18,10 +18,10 @@ class BestReplyTest extends TestCase
         $this->signIn($user = factory(User::class)->create());
 
         $thread = factory(Thread::class)->create(['user_id' => $user->id]);
-        $replies = factory(Reply::class, 3)->create();
+        $replies = factory(Reply::class, 3)->create(['thread_id' => $thread->id]);
 
         $this->postJson(
-            route('best.reply.store', [$thread, $replies[1]]),
+            route('best.reply.store', $replies[1]),
             $thread->toArray()
         );
 
@@ -36,17 +36,17 @@ class BestReplyTest extends TestCase
         $this->signIn($user = factory(User::class)->create());
 
         $thread = factory(Thread::class)->create(['user_id' => $user->id]);
-        $reply = factory(Reply::class)->create();
+        $reply = factory(Reply::class)->create(['thread_id' => $thread->id]);
 
         $this->postJson(
-            route('best.reply.store', [$thread, $reply]),
+            route('best.reply.store', $reply),
             $thread->toArray()
         )->assertStatus(200);
 
         $this->signIn();
 
         $this->postJson(
-            route('best.reply.store', [$thread, $reply]),
+            route('best.reply.store', $reply),
             $thread->toArray()
         )->assertStatus(403);
     }
