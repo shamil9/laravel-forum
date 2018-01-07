@@ -14,6 +14,7 @@ class Thread extends Model
     protected $guarded = [];
     protected $with = [];
     protected $appends = ['best_reply_id'];
+    protected $casts = ['locked' => 'boolean'];
 
     protected static function boot()
     {
@@ -35,6 +36,21 @@ class Thread extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function subscriptions()
+    {
+        return $this->hasMany(ThreadSubscription::class);
+    }
+
+    public function channel()
+    {
+        return $this->belongsTo(Channel::class);
+    }
+
+    public function toggleLock()
+    {
+        static::update(['locked' => ! $this->locked]);
+    }
+
     public function addReply($reply)
     {
         $reply = $this->replies()->create($reply);
@@ -53,19 +69,9 @@ class Thread extends Model
         }
     }
 
-    public function channel()
-    {
-        return $this->belongsTo(Channel::class);
-    }
-
     public function scopeFilter($query, Filter $filters)
     {
         $filters->apply($query);
-    }
-
-    public function subscriptions()
-    {
-        return $this->hasMany(ThreadSubscription::class);
     }
 
     public function subscribe($userId = null)
@@ -125,6 +131,16 @@ class Thread extends Model
         return 'slug';
     }
 
+    public function bestReply()
+    {
+        return $this->hasOne(BestReply::class);
+    }
+
+    public function getBestReplyIdAttribute()
+    {
+        return $this->bestReply()->value('reply_id');
+    }
+
     public function setSlugAttribute($value)
     {
         $value = str_slug($value);
@@ -134,16 +150,5 @@ class Thread extends Model
         }
 
         return $this->attributes['slug'] = $value . '-' . (new \DateTime)->getTimestamp();
-
-    }
-
-    public function bestReply()
-    {
-        return $this->hasOne(BestReply::class);
-    }
-
-    public function getBestReplyIdAttribute()
-    {
-        return $this->bestReply()->value('reply_id');
     }
 }

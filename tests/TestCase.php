@@ -35,7 +35,8 @@ abstract class TestCase extends BaseTestCase
     {
         $user = $user ?: factory('App\User')->create();
         $this->actingAs($user);
-        return $this;
+
+        return $user;
     }
 
     protected function withExceptionHandling()

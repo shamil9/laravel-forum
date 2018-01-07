@@ -32,6 +32,10 @@ Route::delete('/best-reply/{reply}', 'BestReplyController@destroy')
 
 Route::resource('channels', 'ChannelController');
 Route::resource('channels/{channel}/threads', 'ThreadsController');
+Route::post('/threads/{thread}/lock', 'ThreadLockController@lock')
+    ->name('threads.lock');
+Route::delete('/threads/{thread}/lock', 'ThreadLockController@unlock')
+    ->name('threads.unlock');
 
 Route::post('/favorites/{reply}', 'FavoritesController@store')
     ->name('favorites.store');

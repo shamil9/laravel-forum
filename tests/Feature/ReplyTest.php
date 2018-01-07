@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Channel;
 use App\Reply;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -21,8 +20,8 @@ class ReplyTest extends TestCase
         parent::setUp();
         $this->user = factory(User::class)->create();
         $this->thread = factory('App\Thread')->create([
-            'user_id'    => $this->user->id,
-            'channel_id' => factory(Channel::class)->create()->id,
+            'user_id' => $this->user->id,
+            'locked'  => false,
         ]);
         $this->reply = factory('App\Reply')->create([
             'thread_id' => $this->thread->id,
@@ -188,5 +187,18 @@ class ReplyTest extends TestCase
             route('replies.store', ['thread' => $this->thread,]),
             $reply->toArray()
         )->assertStatus(403);
+    }
+
+    /** @test */
+    public function user_can_not_add_a_reply_to_a_locked_thread()
+    {
+        $this->signIn();
+        $reply = factory(Reply::class)->create(['thread_id' => $this->thread->id]);
+
+        $this->thread->toggleLock();
+
+        $this->post(route('replies.store', $this->thread), $reply->toArray())
+            ->assertStatus(302)
+            ->assertSessionHas('flash', 'Sorry this thread is locked');
     }
 }

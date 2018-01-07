@@ -99,7 +99,7 @@ class ThreadsTest extends TestCase
     }
 
     /** @test */
-    function a_thread_should_have_unique_slug()
+    public function a_thread_should_have_unique_slug()
     {
         $this->signIn();
 
@@ -116,5 +116,19 @@ class ThreadsTest extends TestCase
         $timestamp = (new \DateTime)->getTimestamp();
 
         $this->assertEquals('foo-bar-' . $timestamp, Thread::latest('id')->first()->slug);
+    }
+
+    /** @test */
+    public function a_thread_may_be_locked_and_unlocked()
+    {
+        $this->assertFalse($this->thread->locked);
+
+        $this->thread->toggleLock();
+
+        $this->assertTrue($this->thread->locked);
+
+        $this->thread->toggleLock();
+
+        $this->assertFalse($this->thread->locked);
     }
 }
