@@ -11,7 +11,7 @@
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
-*/
+ */
 
 Route::get('/', 'ThreadsController@index')
     ->name('all.threads.index');
@@ -34,7 +34,7 @@ Route::resource('channels', 'ChannelController');
 Route::resource('channels/{channel}/threads', 'ThreadsController');
 Route::post('/threads/{thread}/lock', 'ThreadLockController@lock')
     ->name('threads.lock');
-Route::delete('/threads/{thread}/lock', 'ThreadLockController@unlock')
+Route::post('/threads/{thread}/unlock', 'ThreadLockController@unlock')
     ->name('threads.unlock');
 
 Route::post('/favorites/{reply}', 'FavoritesController@store')

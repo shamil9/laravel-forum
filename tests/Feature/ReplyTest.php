@@ -179,26 +179,13 @@ class ReplyTest extends TestCase
         $this->signIn($user);
 
         $this->post(
-            route('replies.store', ['thread' => $this->thread,]),
+            route('replies.store', ['thread' => $this->thread]),
             $reply->toArray()
         )->assertStatus(302);
 
         $this->post(
-            route('replies.store', ['thread' => $this->thread,]),
+            route('replies.store', ['thread' => $this->thread]),
             $reply->toArray()
         )->assertStatus(403);
-    }
-
-    /** @test */
-    public function user_can_not_add_a_reply_to_a_locked_thread()
-    {
-        $this->signIn();
-        $reply = factory(Reply::class)->create(['thread_id' => $this->thread->id]);
-
-        $this->thread->toggleLock();
-
-        $this->post(route('replies.store', $this->thread), $reply->toArray())
-            ->assertStatus(302)
-            ->assertSessionHas('flash', 'Sorry this thread is locked');
     }
 }

@@ -19,4 +19,9 @@ class ThreadPolicy
     {
         return $thread->user_id == auth()->id();
     }
+
+    public function lock(User $user, Thread $thread)
+    {
+        return $user->is_admin;
+    }
 }

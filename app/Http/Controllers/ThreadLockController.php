@@ -16,6 +16,7 @@ class ThreadLockController extends Controller
     public function lock(Thread $thread)
     {
         try {
+            $this->authorize('lock', $thread);
             $thread->toggleLock();
 
             return response('Thread locked', 200);
@@ -23,7 +24,6 @@ class ThreadLockController extends Controller
             return response('Error! Thread can be locked only by its owner', 403);
         }
     }
-
 
     /**
      * Lock or unlock thread
@@ -34,6 +34,7 @@ class ThreadLockController extends Controller
     public function unlock(Thread $thread)
     {
         try {
+            $this->authorize('lock', $thread);
             $thread->toggleLock();
 
             return response('Thread unlocked', 200);
