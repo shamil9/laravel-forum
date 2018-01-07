@@ -53,8 +53,8 @@
 
                     {{ $replies->links() }}
 
-                    @if(auth()->check())
-                        <form method="post" class="form-group"
+                    @if(auth()->check() && ! $thread->locked)
+                        <form v-if="! locked" method="post" class="form-group"
                               action="{{ route('replies.store', $thread) }}">
                             {{ csrf_field() }}
                             <textarea name="body"
@@ -66,6 +66,8 @@
                                 Add
                             </button>
                         </form>
+                    @else
+                        <h3 v-else>This thread has been locked.</h3>
                     @endif
                 </div>
                 <div class="col-md-4">
@@ -79,11 +81,15 @@
                                 {{ str_plural('comment', $thread->replies_count) }}.
                             </p>
 
-                            @if(Auth::check())
+                            @if(auth()->check())
                                 <subscribe-button
                                     route="{{ route('subscription.store', [$thread]) }}"
                                     :active="{{ json_encode($thread->isSubscribed) }}">
                                 </subscribe-button>
+                            @endif
+
+                            @if (auth()->check() && auth()->user()->is_admin)
+                                <lock-button locked="{{ $thread->locked }}"></lock-button>
                             @endif
                         </div>
                     </div>
