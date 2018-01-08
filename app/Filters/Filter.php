@@ -1,7 +1,6 @@
 <?php
 namespace App\Filters;
 
-
 use Illuminate\Http\Request;
 
 abstract class Filter
@@ -31,7 +30,7 @@ abstract class Filter
         $this->builder = $builder;
 
         foreach ($this->getFilters() as $filter => $value) {
-            if (method_exists($this, $filter) && $this->request->has($filter)){
+            if (method_exists($this, $filter) && $this->request->has($filter)) {
                 $this->$filter($this->request->$filter);
             }
         }
@@ -44,6 +43,6 @@ abstract class Filter
      */
     public function getFilters()
     {
-        return $this->request->intersect($this->filters);
+        return array_filter($this->request->only($this->filters));
     }
 }
